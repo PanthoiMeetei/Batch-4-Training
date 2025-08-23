@@ -52,5 +52,50 @@ After installation, Nginx is active and serving a default HTML page. By navigati
 
 To host your own website, you can replace the default files located in `/var/www/html/` with your own website's files (e.g., `index.html`, CSS, and JavaScript files).
 
+### Hosting Your Own Website: Step-by-Step
+
+You can either clone a repository from GitHub or download a template.
+
+#### Option 1: Clone from GitHub
+
+You can clone a pre-existing website repository directly into the web server's root directory.
+
+```bash
+# First, remove the default Nginx file
+sudo rm /var/www/html/index.nginx-debian.html
+
+# Then, clone the repository
+sudo git clone https://github.com/devilraj98/free-css-website.git /var/www/html
+```
+
+#### Option 2: Use a Website Template
+
+1.  Navigate to the home directory and download the template files.
+    ```bash
+    cd ~
+    wget https://templatemo.com/download/templatemo_578_first_portfolio
+    ```
+
+2.  Install the `unzip` utility if it's not already installed.
+    ```bash
+    sudo apt install unzip -y
+    ```
+
+3.  The downloaded file may not have an extension. Rename it to a `.zip` file.
+    ```bash
+    mv templatemo_578_first_portfolio templatemo_578_first_portfolio.zip
+    ```
+
+4.  Unzip the file.
+    ```bash
+    unzip templatemo_578_first_portfolio.zip
+    ```
+
+5.  Move the contents of the unzipped folder to the Nginx web root directory.
+    ```bash
+    cd templatemo_578_first_portfolio
+    sudo mv * /var/www/html/
+    ```
+    
 Once your files are in place, your website is live and accessible to anyone on the internet via your EC2 instance's public IP address.
 
