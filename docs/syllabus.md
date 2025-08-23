@@ -12,10 +12,10 @@ By the end of this course, students will be able to:
 - Implement comprehensive CI/CD pipelines with modern DevOps tools
 
 ## 📅 Course Duration
-- **Total Duration:** 16 Weeks
-- **Sessions per Week:** 3 sessions (2 theory + 1 hands-on)
+- **Total Duration:** 14 Weeks
+- **Sessions per Week:** 3 sessions (Theory + hands-on)
 - **Session Duration:** 2 hours each
-- **Total Hours:** 96 hours
+- **Total Hours:** 80 hours
 
 ## 📚 Module Breakdown
 
