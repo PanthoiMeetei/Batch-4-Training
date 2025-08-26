@@ -49,9 +49,6 @@ AWS offers a flexible, pay-as-you-go approach for pricing for over 200 cloud ser
 ### 4. AWS Management Console and Service Overview
 The AWS Management Console is a web-based interface for accessing and managing your AWS services. You can manage everything from your EC2 instances to your S3 storage buckets through this single, intuitive UI. We will navigate the console to get familiar with its layout and key services.
 
-### 5. AWS CLI Installation and Configuration
-The AWS Command Line Interface (CLI) is a unified tool to manage your AWS services from a terminal. With just one tool to download and configure, you can control multiple AWS services and automate them through scripts. We will cover the steps to install it on your local machine and configure it with your AWS credentials.
-
 ---
 
 ## Hands-on Lab: Getting Started with AWS

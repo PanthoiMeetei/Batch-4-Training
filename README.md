@@ -6,7 +6,7 @@ This repository contains comprehensive documentation for AWS DevOps Batch 4 trai
 ## 🗂️ Documentation Structure
 
 ### 📋 [Syllabus](./docs/syllabus.md)
-- Complete course curriculum
+- Complete course curriculum(Still going on)
 - Learning objectives
 - Module breakdown
 - Assessment criteria
@@ -16,7 +16,7 @@ This repository contains comprehensive documentation for AWS DevOps Batch 4 trai
 - DevOps Tools
 - Infrastructure as Code
 - CI/CD Tools
-- Monitoring & Logging
+- Cotainerzation(Docker , Kubernetes)
 
 ### 🏗️ [Architecture Diagrams](./docs/architecture/)
 - System Architecture

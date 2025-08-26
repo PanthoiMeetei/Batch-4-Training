@@ -9,7 +9,7 @@
 | **Lambda** | Serverless compute | Event-driven applications, API backends, data processing |
 | **ECS** | Container orchestration | Microservices, containerized applications |
 | **EKS** | Managed Kubernetes | Enterprise container workloads, hybrid deployments |
-| **Fargate** | Serverless containers | Containerized applications without server management |
+
 
 ### **Storage Services**
 | Service | Purpose | Use Cases |
@@ -17,8 +17,7 @@
 | **S3** | Object storage | Static websites, data lakes, backup storage |
 | **EBS** | Block storage | EC2 instance storage, databases, applications |
 | **EFS** | File storage | Shared file systems, content management |
-| **S3 Glacier** | Long-term archival | Compliance storage, backup archives |
-| **Storage Gateway** | Hybrid storage | On-premises to cloud storage integration |
+
 
 ### **Database Services**
 | Service | Purpose | Use Cases |
@@ -26,8 +25,7 @@
 | **RDS** | Managed relational databases | Web applications, business applications |
 | **Aurora** | MySQL/PostgreSQL compatible | High-performance applications, global deployments |
 | **DynamoDB** | NoSQL database | Mobile apps, gaming, IoT applications |
-| **ElastiCache** | In-memory caching | Session storage, real-time analytics |
-| **Redshift** | Data warehouse | Business intelligence, analytics |
+
 
 ### **Networking Services**
 | Service | Purpose | Use Cases |
@@ -115,9 +113,7 @@
 | Tool | Purpose | Features |
 |------|---------|----------|
 | **VS Code** | Code editor | Extensions, debugging, Git integration |
-| **IntelliJ IDEA** | Java IDE | Advanced refactoring, debugging |
-| **PyCharm** | Python IDE | Code analysis, debugging |
-| **Eclipse** | Multi-language IDE | Plugin ecosystem, workspace management |
+| **Cursor** |AI IDE | Plugin ecosystem, workspace management |
 
 ## 🔧 Command Line Tools
 
