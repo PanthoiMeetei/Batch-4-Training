@@ -273,7 +273,7 @@ This section showcases the successful deployment of static websites using Nginx 
 ```
 
 #### Live Website Screenshots
-![Homepage - SUSE Linux](images/suse-homepage.png)
+![Homepage - SUSE Linux](images/imagessuse_homepage.png)
 *Static website homepage successfully hosted on SUSE Linux*
 
 ![Topics Page - SUSE Linux](images/suse-topics-page.png)
@@ -370,13 +370,6 @@ ls -la /srv/www/my-website/
 ✅ **Proper file permissions and ownership**  
 ✅ **Cross-browser compatibility verified**
 
-### 📱 Mobile Responsiveness
-
-![Mobile View - Homepage](images/mobile-homepage.png)
-*Website fully responsive on mobile devices*
-
-![Mobile View - Topics](images/mobile-topics.png)
-*Topics page optimized for mobile viewing*
 
 ### 🌐 Browser Compatibility
 
