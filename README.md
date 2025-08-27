@@ -6,17 +6,17 @@ This repository contains comprehensive documentation for AWS DevOps Batch 4 trai
 ## 🗂️ Documentation Structure
 
 ### 📋 [Syllabus](./docs/syllabus.md)
-- Complete course curriculum(Still going on)
-- Learning objectives
-- Module breakdown
-- Assessment criteria
+- Complete course curriculum (40 days, 14 weeks)
+- Learning objectives and course outcomes
+- Module breakdown with hands-on labs
+- Certification path and assessment criteria
 
 ### 🛠️ [Tools & Technologies](./docs/tools-technologies.md)
-- AWS Services
-- DevOps Tools
-- Infrastructure as Code
-- CI/CD Tools
-- Cotainerzation(Docker , Kubernetes)
+- AWS Services (EC2, S3, RDS, VPC, Lambda, CloudWatch)
+- DevOps Tools (Git, Jenkins, Docker, Kubernetes)
+- Infrastructure as Code (Terraform, CloudFormation)
+- CI/CD Tools (Jenkins, GitHub Actions)
+- Containerization (Docker, Kubernetes)
 
 ### 🏗️ [Architecture Diagrams](./docs/architecture/)
 - System Architecture
@@ -55,23 +55,24 @@ This repository contains comprehensive documentation for AWS DevOps Batch 4 trai
 ## 📈 Learning Path
 
 ```
-Week 1-2: AWS Fundamentals & IAM
-Week 3-4: Compute Services (EC2, Lambda)
-Week 5-6: Storage & Database Services
-Week 7-8: Networking & Security
+Week 1-2: AWS Fundamentals & Linux commands
+Week 3-4: Storage & Database Services  
+Week 5-6: Networking & Security
+Week 7-8: Serverless Computing & Containers
 Week 9-10: DevOps Tools & CI/CD
-Week 11-12: Infrastructure as Code
-Week 13-14: Monitoring & Logging
-Week 15-16: Advanced Topics & Projects
+Week 11-12: Infrastructure as Code (Terraform)
+Week 13-14: Container Orchestration (Kubernetes)
+Week 15-16: Monitoring & Logging + Final Projects
 ```
 
 ## 🎯 Prerequisites
 
-- Basic understanding of Linux commands
-- Familiarity with programming concepts
-- AWS Free Tier account
-- Git knowledge
-- Docker basics (recommended)
+- Basic understanding of Linux commands and shell scripting
+- Familiarity with programming concepts and web technologies
+- AWS Free Tier account (required for hands-on labs)
+- Git knowledge and version control concepts
+- Docker basics (recommended but not mandatory)
+- Understanding of networking fundamentals
 
 ## 📞 Support
 
