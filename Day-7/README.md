@@ -287,6 +287,7 @@ sudo chown ec2-user:ec2-user /data
 ![EBS Volume Data Persistence](images/Img3.png)
 
 
+
 ## 📚 Additional Resources
 
 - [AWS EBS Documentation](https://docs.aws.amazon.com/ebs/)
