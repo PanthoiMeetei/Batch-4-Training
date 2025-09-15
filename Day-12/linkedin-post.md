@@ -63,7 +63,7 @@ Companies like Airbnb, Netflix, and Samsung use RDS to handle millions of transa
 
 ---
 
-*Day 13 coming up: AWS S3 - Object storage, static website hosting, and lifecycle management! 📦*
+*Day 13 coming up: VPC - Virtual Private Cloud 📦*
 
 ---
 
