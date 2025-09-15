@@ -1,666 +1,714 @@
-# Day 12: Advanced MySQL on EC2 & Production Database Management
+# Day 12: AWS RDS (Relational Database Service) & Managed Databases
 
 ## 📚 Learning Objectives
-- Master advanced MySQL configurations on EC2
-- Implement production-grade database security
-- Practice complex CRUD operations and transactions
-- Learn database performance optimization
-- Understand backup and disaster recovery strategies
+- Understand AWS RDS and managed database services
+- Learn RDS vs EC2 database comparison
+- Create and configure RDS MySQL instances
+- Practice database migration from EC2 to RDS
+- Implement RDS security, backup, and monitoring
+- Master RDS Multi-AZ and Read Replicas
 
-## 🎯 Advanced MySQL Implementation
+## 🎯 What is AWS RDS?
 
-### Production-Ready MySQL Setup
-Building on Day 11's foundation, today we'll create a production-grade MySQL environment with advanced features, security hardening, and performance optimization.
+AWS RDS is a managed relational database service that makes it easy to set up, operate, and scale databases in the cloud. RDS handles routine database tasks like provisioning, patching, backup, recovery, failure detection, and repair.
+
+### RDS vs EC2 Database Comparison
+
+| Feature | EC2 Database | AWS RDS |
+|---------|--------------|----------|
+| **Management** | Manual setup & maintenance | Fully managed |
+| **Patching** | Manual OS & DB patches | Automatic patches |
+| **Backups** | Manual backup scripts | Automated backups |
+| **Scaling** | Manual scaling | Easy scaling |
+| **High Availability** | Manual setup | Multi-AZ with one click |
+| **Monitoring** | Custom monitoring | Built-in CloudWatch |
+| **Cost** | Lower (DIY) | Higher (managed service) |
+| **Control** | Full control | Limited control |
 
 ### Architecture Overview
 ```
-Internet → Load Balancer → EC2 Instances → MySQL Master/Slave
+Internet → Application → RDS MySQL
     ↓
-Advanced Features:
-├── SSL/TLS Encryption
-├── Master-Slave Replication
+Managed Features:
 ├── Automated Backups
-├── Performance Monitoring
-└── Security Hardening
+├── Multi-AZ Deployment
+├── Read Replicas
+├── Performance Insights
+└── Security Groups
 ```
 
-## 🛠️ Advanced Lab: Production MySQL Environment
+## 🛠️ Practical Lab: AWS RDS Implementation
 
 ### Prerequisites
+- AWS Account with RDS permissions
 - Completed Day 11 MySQL basics
-- Two EC2 instances (Master and Slave)
-- Advanced security group configuration
-- SSL certificates for encryption
+- Basic understanding of VPC and Security Groups
+- EC2 instance for application connection
 
-### Step 1: Launch Production EC2 Instances
+### RDS Supported Database Engines
+- **MySQL** - Open source relational database
+- **PostgreSQL** - Advanced open source database
+- **MariaDB** - MySQL-compatible database
+- **Oracle** - Enterprise database
+- **SQL Server** - Microsoft database
+- **Amazon Aurora** - AWS-native high-performance database
 
-```bash
-# Master Instance Configuration
-Name: mysql-master-prod
-AMI: Amazon Linux 2023
-Instance Type: t3.small (better performance)
-Storage: 20GB gp3 with encryption
-Security Group: mysql-prod-sg
-
-# Slave Instance Configuration  
-Name: mysql-slave-prod
-AMI: Amazon Linux 2023
-Instance Type: t3.small
-Storage: 20GB gp3 with encryption
-Security Group: mysql-prod-sg
-```
-
-**Advanced Security Group Rules:**
-```
-Inbound Rules:
-- SSH (22): Your IP only
-- MySQL (3306): Internal VPC only
-- Custom TCP (33060): MySQL X Protocol
-- HTTPS (443): Application servers
-
-Outbound Rules:
-- All traffic: 0.0.0.0/0 (for updates and replication)
-```
-
-### Step 2: Advanced MySQL Installation and Configuration
+### Step 1: Create RDS Subnet Group
 
 ```bash
-# Connect to Master instance
-ssh -i your-key.pem ec2-user@master-ip
+# Navigate to RDS Console
+AWS Console → RDS → Subnet Groups → Create DB Subnet Group
 
-# Install MySQL 8.0 with additional tools
+# Configuration:
+Name: rds-subnet-group
+Description: Subnet group for RDS instances
+VPC: Select your VPC
+Availability Zones: Select 2+ AZs
+Subnets: Select private subnets in each AZ
+```
+
+**Why Subnet Groups?**
+- RDS requires subnets in at least 2 Availability Zones
+- Enables Multi-AZ deployments
+- Provides network isolation and security
+
+### Step 2: Create RDS Security Group
+
+```bash
+# Create Security Group for RDS
+AWS Console → EC2 → Security Groups → Create Security Group
+
+# Configuration:
+Name: rds-mysql-sg
+Description: Security group for RDS MySQL
+VPC: Select your VPC
+
+# Inbound Rules:
+Type: MySQL/Aurora (3306)
+Source: EC2 Security Group (or specific IP)
+Description: Allow MySQL access from application servers
+
+# Outbound Rules:
+Type: All Traffic
+Destination: 0.0.0.0/0
+```
+
+**Security Best Practices:**
+- Never allow 0.0.0.0/0 for database access
+- Use security group references instead of IP addresses
+- Implement least privilege access
+
+### Step 3: Create RDS MySQL Instance
+
+```bash
+# Navigate to RDS Console
+AWS Console → RDS → Databases → Create Database
+
+# Database Creation Method:
+Standard Create (for full configuration options)
+
+# Engine Options:
+Engine Type: MySQL
+Version: MySQL 8.0.35 (latest)
+
+# Templates:
+Production (for production workloads)
+Dev/Test (for development)
+Free Tier (for learning)
+```
+
+**RDS Instance Configuration:**
+```bash
+# Settings:
+DB Instance Identifier: ecommerce-mysql-db
+Master Username: admin
+Master Password: SecurePass123!
+
+# DB Instance Class:
+Burstable Classes: db.t3.micro (Free Tier)
+Standard Classes: db.m5.large (Production)
+
+# Storage:
+Storage Type: gp3 (General Purpose SSD)
+Allocated Storage: 20 GB
+Storage Autoscaling: Enable
+Maximum Storage Threshold: 100 GB
+
+# Connectivity:
+VPC: Default VPC or Custom VPC
+Subnet Group: rds-subnet-group
+Public Access: No (recommended)
+VPC Security Groups: rds-mysql-sg
+Availability Zone: No Preference
+Database Port: 3306
+```
+
+### Step 4: Configure Additional RDS Settings
+
+```bash
+# Database Authentication:
+Database Authentication: Password Authentication
+# (or IAM Database Authentication for enhanced security)
+
+# Monitoring:
+Enable Performance Insights: Yes
+Performance Insights Retention: 7 days (Free Tier)
+Enable Enhanced Monitoring: Yes
+Monitoring Role: rds-monitoring-role
+Granularity: 60 seconds
+
+# Additional Configuration:
+Initial Database Name: ecommerce_db
+DB Parameter Group: default.mysql8.0
+Option Group: default:mysql-8-0
+Backup Retention Period: 7 days
+Backup Window: 03:00-04:00 UTC
+Maintenance Window: sun:04:00-sun:05:00 UTC
+
+# Encryption:
+Encryption at Rest: Enable
+AWS KMS Key: Default
+
+# Deletion Protection:
+Enable Deletion Protection: Yes (for production)
+```
+
+### Step 5: Connect to RDS Instance
+
+```bash
+# Get RDS Endpoint
+AWS Console → RDS → Databases → Select your DB → Connectivity & Security
+# Copy the Endpoint URL
+
+# Connect from EC2 instance
+ssh -i your-key.pem ec2-user@your-ec2-ip
+
+# Install MySQL client
 sudo yum update -y
-sudo yum install mysql-server mysql-client -y
+sudo yum install mysql -y
 
-# Install performance monitoring tools
-sudo yum install htop iotop sysstat -y
+# Connect to RDS
+mysql -h ecommerce-mysql-db.xxxxxxxxx.us-east-1.rds.amazonaws.com -u admin -p
+# Enter password: SecurePass123!
 
-# Start and enable MySQL
-sudo systemctl start mysqld
-sudo systemctl enable mysqld
-
-# Configure MySQL for production
-sudo mysql_secure_installation
+# Verify connection
+SELECT VERSION();
+SHOW DATABASES;
 ```
 
-### Step 3: Production MySQL Configuration
-
-```bash
-# Edit MySQL configuration file
-sudo nano /etc/mysql/mysql.conf.d/mysqld.cnf
-
-# Add production configurations:
-```
-
-```ini
-[mysqld]
-# Basic Settings
-bind-address = 0.0.0.0
-port = 3306
-datadir = /var/lib/mysql
-socket = /var/run/mysqld/mysqld.sock
-
-# Performance Tuning
-innodb_buffer_pool_size = 1G
-innodb_log_file_size = 256M
-innodb_flush_log_at_trx_commit = 2
-query_cache_size = 128M
-max_connections = 200
-thread_cache_size = 16
-
-# Security Settings
-ssl-ca = /etc/mysql/ssl/ca-cert.pem
-ssl-cert = /etc/mysql/ssl/server-cert.pem
-ssl-key = /etc/mysql/ssl/server-key.pem
-require_secure_transport = ON
-
-# Logging
-general_log = ON
-general_log_file = /var/log/mysql/general.log
-slow_query_log = ON
-slow_query_log_file = /var/log/mysql/slow.log
-long_query_time = 2
-
-# Replication Settings (Master)
-server-id = 1
-log-bin = mysql-bin
-binlog_format = ROW
-expire_logs_days = 7
-```
-
-### Step 4: Create Production Database Schema
+### Step 6: Create Database Schema on RDS
 
 ```sql
--- Connect to MySQL
-mysql -u root -p
+-- Use the initial database
+USE ecommerce_db;
 
--- Create production database
-CREATE DATABASE ecommerce_prod;
-USE ecommerce_prod;
-
--- Create comprehensive tables
-CREATE TABLE categories (
-    category_id INT PRIMARY KEY AUTO_INCREMENT,
-    category_name VARCHAR(100) NOT NULL,
-    description TEXT,
-    parent_category_id INT,
-    is_active BOOLEAN DEFAULT TRUE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    INDEX idx_parent_category (parent_category_id),
-    INDEX idx_active (is_active)
+-- Create tables (same structure as Day 11)
+CREATE TABLE departments (
+    dept_id INT PRIMARY KEY AUTO_INCREMENT,
+    dept_name VARCHAR(50) NOT NULL,
+    location VARCHAR(100),
+    budget DECIMAL(12,2),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE products (
-    product_id INT PRIMARY KEY AUTO_INCREMENT,
-    product_name VARCHAR(200) NOT NULL,
-    description TEXT,
-    price DECIMAL(10,2) NOT NULL,
-    cost_price DECIMAL(10,2),
-    stock_quantity INT DEFAULT 0,
-    category_id INT,
-    sku VARCHAR(50) UNIQUE,
-    is_active BOOLEAN DEFAULT TRUE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (category_id) REFERENCES categories(category_id),
-    INDEX idx_category (category_id),
-    INDEX idx_sku (sku),
-    INDEX idx_price (price),
-    INDEX idx_active (is_active)
-);
-
-CREATE TABLE customers (
-    customer_id INT PRIMARY KEY AUTO_INCREMENT,
+CREATE TABLE employees (
+    emp_id INT PRIMARY KEY AUTO_INCREMENT,
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
-    email VARCHAR(100) UNIQUE NOT NULL,
-    phone VARCHAR(20),
-    address TEXT,
-    city VARCHAR(50),
-    state VARCHAR(50),
-    zip_code VARCHAR(10),
-    country VARCHAR(50) DEFAULT 'USA',
-    date_of_birth DATE,
+    email VARCHAR(100) UNIQUE,
+    phone VARCHAR(15),
+    hire_date DATE,
+    salary DECIMAL(10,2),
+    dept_id INT,
+    manager_id INT,
     is_active BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    INDEX idx_email (email),
-    INDEX idx_name (first_name, last_name),
-    INDEX idx_location (city, state)
+    FOREIGN KEY (dept_id) REFERENCES departments(dept_id),
+    FOREIGN KEY (manager_id) REFERENCES employees(emp_id),
+    INDEX idx_dept (dept_id),
+    INDEX idx_manager (manager_id),
+    INDEX idx_email (email)
 );
 
-CREATE TABLE orders (
-    order_id INT PRIMARY KEY AUTO_INCREMENT,
-    customer_id INT NOT NULL,
-    order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    total_amount DECIMAL(10,2) NOT NULL,
-    tax_amount DECIMAL(10,2) DEFAULT 0,
-    shipping_amount DECIMAL(10,2) DEFAULT 0,
-    discount_amount DECIMAL(10,2) DEFAULT 0,
-    status ENUM('pending', 'processing', 'shipped', 'delivered', 'cancelled') DEFAULT 'pending',
-    shipping_address TEXT,
-    payment_method VARCHAR(50),
-    payment_status ENUM('pending', 'paid', 'failed', 'refunded') DEFAULT 'pending',
+CREATE TABLE projects (
+    project_id INT PRIMARY KEY AUTO_INCREMENT,
+    project_name VARCHAR(100) NOT NULL,
+    description TEXT,
+    start_date DATE,
+    end_date DATE,
+    budget DECIMAL(12,2),
+    status ENUM('planning', 'active', 'completed', 'cancelled') DEFAULT 'planning',
+    dept_id INT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (customer_id) REFERENCES customers(customer_id),
-    INDEX idx_customer (customer_id),
-    INDEX idx_order_date (order_date),
-    INDEX idx_status (status),
-    INDEX idx_payment_status (payment_status)
+    FOREIGN KEY (dept_id) REFERENCES departments(dept_id),
+    INDEX idx_dept (dept_id),
+    INDEX idx_status (status)
 );
 
-CREATE TABLE order_items (
-    order_item_id INT PRIMARY KEY AUTO_INCREMENT,
-    order_id INT NOT NULL,
-    product_id INT NOT NULL,
-    quantity INT NOT NULL,
-    unit_price DECIMAL(10,2) NOT NULL,
-    total_price DECIMAL(10,2) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (order_id) REFERENCES orders(order_id) ON DELETE CASCADE,
-    FOREIGN KEY (product_id) REFERENCES products(product_id),
-    INDEX idx_order (order_id),
-    INDEX idx_product (product_id)
+CREATE TABLE employee_projects (
+    emp_id INT,
+    project_id INT,
+    role VARCHAR(50),
+    allocation_percentage DECIMAL(5,2),
+    start_date DATE,
+    end_date DATE,
+    PRIMARY KEY (emp_id, project_id),
+    FOREIGN KEY (emp_id) REFERENCES employees(emp_id),
+    FOREIGN KEY (project_id) REFERENCES projects(project_id)
 );
 ```
 
-### Step 5: Advanced CRUD Operations
+### Step 7: Perform CRUD Operations on RDS
 
-#### Complex INSERT Operations
+#### INSERT Operations
 
 ```sql
--- Insert sample categories
-INSERT INTO categories (category_name, description) VALUES
-('Electronics', 'Electronic devices and accessories'),
-('Clothing', 'Apparel and fashion items'),
-('Books', 'Books and educational materials'),
-('Home & Garden', 'Home improvement and garden supplies'),
-('Sports', 'Sports equipment and accessories');
+-- Insert departments
+INSERT INTO departments (dept_name, location, budget) VALUES
+('Engineering', 'Seattle', 2000000.00),
+('Marketing', 'New York', 800000.00),
+('Sales', 'Chicago', 1200000.00),
+('HR', 'Austin', 600000.00),
+('Finance', 'Boston', 500000.00);
 
--- Insert subcategories
-INSERT INTO categories (category_name, description, parent_category_id) VALUES
-('Smartphones', 'Mobile phones and accessories', 1),
-('Laptops', 'Portable computers', 1),
-('Men\'s Clothing', 'Clothing for men', 2),
-('Women\'s Clothing', 'Clothing for women', 2);
+-- Insert employees
+INSERT INTO employees (first_name, last_name, email, phone, hire_date, salary, dept_id) VALUES
+('John', 'Doe', 'john.doe@company.com', '555-0101', '2023-01-15', 95000.00, 1),
+('Jane', 'Smith', 'jane.smith@company.com', '555-0102', '2023-02-20', 78000.00, 2),
+('Mike', 'Johnson', 'mike.johnson@company.com', '555-0103', '2023-03-10', 82000.00, 1),
+('Sarah', 'Wilson', 'sarah.wilson@company.com', '555-0104', '2023-04-05', 75000.00, 3),
+('David', 'Brown', 'david.brown@company.com', '555-0105', '2023-05-12', 68000.00, 4);
 
--- Insert products with complex data
-INSERT INTO products (product_name, description, price, cost_price, stock_quantity, category_id, sku) VALUES
-('iPhone 15 Pro', 'Latest Apple smartphone with advanced features', 999.99, 750.00, 50, 6, 'IPH15PRO001'),
-('MacBook Air M2', 'Lightweight laptop with M2 chip', 1199.99, 900.00, 25, 7, 'MBA-M2-001'),
-('Nike Air Max', 'Comfortable running shoes', 129.99, 80.00, 100, 5, 'NIKE-AM-001'),
-('Samsung Galaxy S24', 'Android smartphone with AI features', 899.99, 650.00, 75, 6, 'SGS24-001');
+-- Insert projects
+INSERT INTO projects (project_name, description, start_date, end_date, budget, status, dept_id) VALUES
+('Cloud Migration', 'Migrate legacy systems to AWS', '2024-01-01', '2024-06-30', 500000.00, 'active', 1),
+('Marketing Campaign', 'Q2 product launch campaign', '2024-02-01', '2024-05-31', 200000.00, 'active', 2),
+('Sales Automation', 'Implement CRM system', '2024-03-01', '2024-08-31', 300000.00, 'planning', 3);
 
--- Insert customers
-INSERT INTO customers (first_name, last_name, email, phone, address, city, state, zip_code) VALUES
-('John', 'Smith', 'john.smith@email.com', '555-0101', '123 Main St', 'New York', 'NY', '10001'),
-('Sarah', 'Johnson', 'sarah.j@email.com', '555-0102', '456 Oak Ave', 'Los Angeles', 'CA', '90210'),
-('Mike', 'Brown', 'mike.brown@email.com', '555-0103', '789 Pine St', 'Chicago', 'IL', '60601'),
-('Emily', 'Davis', 'emily.davis@email.com', '555-0104', '321 Elm St', 'Houston', 'TX', '77001');
+-- Insert employee-project assignments
+INSERT INTO employee_projects (emp_id, project_id, role, allocation_percentage, start_date) VALUES
+(1, 1, 'Lead Developer', 80.00, '2024-01-01'),
+(3, 1, 'Developer', 60.00, '2024-01-15'),
+(2, 2, 'Marketing Manager', 100.00, '2024-02-01'),
+(4, 3, 'Sales Lead', 50.00, '2024-03-01');
 ```
 
-#### Advanced SELECT Queries
+#### READ Operations (SELECT)
 
 ```sql
--- Complex JOIN with aggregations
-SELECT 
-    c.category_name,
-    COUNT(p.product_id) as product_count,
-    AVG(p.price) as avg_price,
-    MIN(p.price) as min_price,
-    MAX(p.price) as max_price,
-    SUM(p.stock_quantity) as total_stock
-FROM categories c
-LEFT JOIN products p ON c.category_id = p.category_id
-WHERE c.parent_category_id IS NULL
-GROUP BY c.category_id, c.category_name
-HAVING product_count > 0
-ORDER BY avg_price DESC;
+-- Basic queries
+SELECT * FROM departments;
+SELECT * FROM employees;
+SELECT * FROM projects;
 
--- Customer order analysis
+-- Complex JOIN queries
 SELECT 
-    CONCAT(cu.first_name, ' ', cu.last_name) as customer_name,
-    COUNT(o.order_id) as total_orders,
-    SUM(o.total_amount) as total_spent,
-    AVG(o.total_amount) as avg_order_value,
-    MAX(o.order_date) as last_order_date
-FROM customers cu
-LEFT JOIN orders o ON cu.customer_id = o.customer_id
-GROUP BY cu.customer_id, cu.first_name, cu.last_name
-ORDER BY total_spent DESC;
+    e.first_name,
+    e.last_name,
+    e.salary,
+    d.dept_name,
+    d.location
+FROM employees e
+JOIN departments d ON e.dept_id = d.dept_id
+ORDER BY e.salary DESC;
 
--- Product performance analysis
+-- Project assignments with employee details
 SELECT 
-    p.product_name,
-    p.price,
-    p.stock_quantity,
-    COALESCE(SUM(oi.quantity), 0) as total_sold,
-    COALESCE(SUM(oi.total_price), 0) as total_revenue,
-    c.category_name
-FROM products p
-LEFT JOIN order_items oi ON p.product_id = oi.product_id
-LEFT JOIN categories c ON p.category_id = c.category_id
-GROUP BY p.product_id, p.product_name, p.price, p.stock_quantity, c.category_name
-ORDER BY total_revenue DESC;
+    p.project_name,
+    CONCAT(e.first_name, ' ', e.last_name) as employee_name,
+    ep.role,
+    ep.allocation_percentage,
+    d.dept_name
+FROM projects p
+JOIN employee_projects ep ON p.project_id = ep.project_id
+JOIN employees e ON ep.emp_id = e.emp_id
+JOIN departments d ON e.dept_id = d.dept_id
+ORDER BY p.project_name, ep.allocation_percentage DESC;
+
+-- Department statistics
+SELECT 
+    d.dept_name,
+    COUNT(e.emp_id) as employee_count,
+    AVG(e.salary) as avg_salary,
+    SUM(e.salary) as total_salary_cost,
+    d.budget,
+    (d.budget - SUM(e.salary)) as remaining_budget
+FROM departments d
+LEFT JOIN employees e ON d.dept_id = e.dept_id
+GROUP BY d.dept_id, d.dept_name, d.budget
+ORDER BY employee_count DESC;
+
+#### UPDATE Operations
+
+```sql
+-- Update employee salary
+UPDATE employees 
+SET salary = salary * 1.10 
+WHERE dept_id = 1;
+
+-- Update project status
+UPDATE projects 
+SET status = 'completed', end_date = CURDATE() 
+WHERE project_id = 2;
+
+-- Update department budget
+UPDATE departments 
+SET budget = budget * 1.05 
+WHERE dept_name = 'Engineering';
+
+-- Verify updates
+SELECT emp_id, first_name, last_name, salary FROM employees WHERE dept_id = 1;
 ```
 
-#### Transaction Management
+#### DELETE Operations
 
 ```sql
--- Complex order creation with transaction
-START TRANSACTION;
+-- Remove employee from project
+DELETE FROM employee_projects 
+WHERE emp_id = 4 AND project_id = 3;
 
--- Insert order
-INSERT INTO orders (customer_id, total_amount, tax_amount, shipping_amount, status, payment_method)
-VALUES (1, 1329.98, 106.40, 15.99, 'processing', 'credit_card');
+-- Deactivate employee (soft delete)
+UPDATE employees 
+SET is_active = FALSE 
+WHERE emp_id = 5;
 
-SET @order_id = LAST_INSERT_ID();
+-- Delete completed project
+DELETE FROM projects 
+WHERE status = 'completed' AND end_date < DATE_SUB(CURDATE(), INTERVAL 1 YEAR);
 
--- Insert order items
-INSERT INTO order_items (order_id, product_id, quantity, unit_price, total_price) VALUES
-(@order_id, 1, 1, 999.99, 999.99),
-(@order_id, 3, 1, 129.99, 129.99);
-
--- Update product stock
-UPDATE products SET stock_quantity = stock_quantity - 1 WHERE product_id = 1;
-UPDATE products SET stock_quantity = stock_quantity - 1 WHERE product_id = 3;
-
--- Verify stock levels
-SELECT product_id, product_name, stock_quantity 
-FROM products 
-WHERE product_id IN (1, 3) AND stock_quantity >= 0;
-
--- Commit if everything is successful
-COMMIT;
-
--- If there's an error, rollback
--- ROLLBACK;
+-- Verify deletions
+SELECT COUNT(*) FROM employee_projects;
+SELECT * FROM employees WHERE is_active = TRUE;
 ```
 
-### Step 6: Performance Optimization
+### Step 8: RDS Advanced Features
 
-#### Query Optimization
+#### Multi-AZ Deployment
+
+```bash
+# Enable Multi-AZ for High Availability
+AWS Console → RDS → Databases → Select DB → Modify
+
+# Multi-AZ Deployment:
+Enable Multi-AZ: Yes
+
+# Benefits:
+- Automatic failover to standby
+- Enhanced durability and availability
+- Synchronous replication
+- Zero data loss during failover
+```
+
+#### Read Replicas
+
+```bash
+# Create Read Replica for Read Scaling
+AWS Console → RDS → Databases → Select DB → Actions → Create Read Replica
+
+# Configuration:
+DB Instance Identifier: ecommerce-mysql-read-replica
+Destination Region: Same region or different
+DB Instance Class: db.t3.micro
+Public Access: No
+Monitoring: Enable Performance Insights
+
+# Use Cases:
+- Read-heavy workloads
+- Reporting and analytics
+- Cross-region disaster recovery
+```
+
+#### Automated Backups
 
 ```sql
--- Analyze slow queries
-SELECT 
-    query_time,
-    lock_time,
-    rows_sent,
-    rows_examined,
-    sql_text
-FROM mysql.slow_log
-ORDER BY query_time DESC
-LIMIT 10;
+-- RDS automatically creates backups
+-- View backup settings:
+AWS Console → RDS → Databases → Select DB → Maintenance & Backups
 
--- Create composite indexes for better performance
-CREATE INDEX idx_orders_customer_date ON orders(customer_id, order_date);
-CREATE INDEX idx_products_category_price ON products(category_id, price);
-CREATE INDEX idx_customers_location_active ON customers(city, state, is_active);
+-- Point-in-time recovery available
+-- Backup retention: 1-35 days
+-- Automated backup window
+-- Manual snapshots for long-term retention
+```
 
--- Analyze query execution plans
-EXPLAIN SELECT 
-    p.product_name,
-    SUM(oi.quantity) as total_sold
-FROM products p
-JOIN order_items oi ON p.product_id = oi.product_id
-JOIN orders o ON oi.order_id = o.order_id
-WHERE o.order_date >= '2024-01-01'
-GROUP BY p.product_id, p.product_name
-ORDER BY total_sold DESC;
+### Step 9: RDS Monitoring and Performance
+
+#### Performance Insights
+
+```bash
+# Access Performance Insights
+AWS Console → RDS → Databases → Select DB → Monitoring → Performance Insights
+
+# Key Metrics:
+- Database load (average active sessions)
+- Top SQL statements
+- Top wait events
+- Top databases, users, and hosts
+
+# Benefits:
+- Identify performance bottlenecks
+- Optimize slow queries
+- Monitor resource utilization
+```
+
+#### CloudWatch Monitoring
+
+```bash
+# Key RDS CloudWatch Metrics:
+- CPUUtilization
+- DatabaseConnections
+- FreeableMemory
+- ReadLatency / WriteLatency
+- ReadIOPS / WriteIOPS
+- FreeStorageSpace
+
+# Create CloudWatch Alarms:
+AWS Console → CloudWatch → Alarms → Create Alarm
+
+# Example Alarm:
+Metric: CPUUtilization
+Threshold: > 80%
+Action: Send SNS notification
 ```
 
 #### Database Maintenance
 
 ```sql
--- Optimize tables
-OPTIMIZE TABLE products, customers, orders, order_items;
+-- Check database performance
+SHOW GLOBAL STATUS LIKE 'Connections';
+SHOW GLOBAL STATUS LIKE 'Queries';
+SHOW GLOBAL STATUS LIKE 'Uptime';
 
--- Analyze table statistics
-ANALYZE TABLE products, customers, orders, order_items;
+-- Monitor active connections
+SHOW PROCESSLIST;
 
--- Check table status
-SHOW TABLE STATUS LIKE 'products';
-
--- Monitor database size
+-- Check table sizes
 SELECT 
-    table_schema as 'Database',
-    table_name as 'Table',
-    ROUND(((data_length + index_length) / 1024 / 1024), 2) as 'Size (MB)'
+    table_name,
+    ROUND(((data_length + index_length) / 1024 / 1024), 2) AS 'Size (MB)'
 FROM information_schema.tables
-WHERE table_schema = 'ecommerce_prod'
+WHERE table_schema = 'ecommerce_db'
 ORDER BY (data_length + index_length) DESC;
 ```
 
-### Step 7: Advanced Security Implementation
+### Step 10: RDS Security Best Practices
 
-#### User Management and Privileges
+#### Database User Management
 
 ```sql
--- Create application users with specific privileges
-CREATE USER 'app_read'@'%' IDENTIFIED BY 'ReadOnlyPass123!';
-CREATE USER 'app_write'@'%' IDENTIFIED BY 'WritePass123!';
-CREATE USER 'app_admin'@'localhost' IDENTIFIED BY 'AdminPass123!';
+-- Create application users
+CREATE USER 'app_readonly'@'%' IDENTIFIED BY 'ReadPass123!';
+CREATE USER 'app_readwrite'@'%' IDENTIFIED BY 'WritePass123!';
 
--- Grant specific privileges
-GRANT SELECT ON ecommerce_prod.* TO 'app_read'@'%';
-GRANT SELECT, INSERT, UPDATE ON ecommerce_prod.* TO 'app_write'@'%';
-GRANT ALL PRIVILEGES ON ecommerce_prod.* TO 'app_admin'@'localhost';
+-- Grant appropriate privileges
+GRANT SELECT ON ecommerce_db.* TO 'app_readonly'@'%';
+GRANT SELECT, INSERT, UPDATE, DELETE ON ecommerce_db.* TO 'app_readwrite'@'%';
 
--- Create role-based access
-CREATE ROLE 'ecommerce_reader';
-CREATE ROLE 'ecommerce_writer';
-CREATE ROLE 'ecommerce_admin';
-
-GRANT SELECT ON ecommerce_prod.* TO 'ecommerce_reader';
-GRANT SELECT, INSERT, UPDATE, DELETE ON ecommerce_prod.* TO 'ecommerce_writer';
-GRANT ALL PRIVILEGES ON ecommerce_prod.* TO 'ecommerce_admin';
-
+-- Flush privileges
 FLUSH PRIVILEGES;
+
+-- Test connections
+-- mysql -h your-rds-endpoint -u app_readonly -p
 ```
 
-#### SSL/TLS Configuration
+#### SSL/TLS Encryption
 
 ```bash
-# Generate SSL certificates
-sudo mkdir -p /etc/mysql/ssl
-cd /etc/mysql/ssl
+# RDS automatically provides SSL certificates
+# Download RDS CA certificate
+wget https://s3.amazonaws.com/rds-downloads/rds-ca-2019-root.pem
 
-# Create CA certificate
-sudo openssl genrsa 2048 > ca-key.pem
-sudo openssl req -new -x509 -nodes -days 3600 -key ca-key.pem -out ca-cert.pem
+# Connect with SSL
+mysql -h your-rds-endpoint -u admin -p --ssl-ca=rds-ca-2019-root.pem --ssl-mode=REQUIRED
 
-# Create server certificate
-sudo openssl req -newkey rsa:2048 -days 3600 -nodes -keyout server-key.pem -out server-req.pem
-sudo openssl rsa -in server-key.pem -out server-key.pem
-sudo openssl x509 -req -in server-req.pem -days 3600 -CA ca-cert.pem -CAkey ca-key.pem -set_serial 01 -out server-cert.pem
-
-# Set proper permissions
-sudo chown mysql:mysql /etc/mysql/ssl/*
-sudo chmod 600 /etc/mysql/ssl/*-key.pem
-sudo chmod 644 /etc/mysql/ssl/*-cert.pem
-
-# Restart MySQL
-sudo systemctl restart mysqld
+# Verify SSL connection
+mysql> SHOW STATUS LIKE 'Ssl_cipher';
 ```
 
-### Step 8: Backup and Recovery Strategies
-
-#### Automated Backup Script
+#### Parameter Groups
 
 ```bash
-#!/bin/bash
-# backup-mysql.sh
+# Create custom parameter group
+AWS Console → RDS → Parameter Groups → Create Parameter Group
 
-# Configuration
-DB_NAME="ecommerce_prod"
-DB_USER="backup_user"
-DB_PASS="BackupPass123!"
-BACKUP_DIR="/opt/mysql-backups"
-DATE=$(date +%Y%m%d_%H%M%S)
-RETENTION_DAYS=7
+# Configuration:
+Parameter Group Family: mysql8.0
+Group Name: custom-mysql-params
+Description: Custom MySQL parameters
 
-# Create backup directory
-mkdir -p $BACKUP_DIR
+# Modify parameters:
+- max_connections: 200
+- innodb_buffer_pool_size: {DBInstanceClassMemory*3/4}
+- slow_query_log: 1
+- long_query_time: 2
 
-# Full database backup
-mysqldump -u $DB_USER -p$DB_PASS \
-  --single-transaction \
-  --routines \
-  --triggers \
-  --events \
-  --hex-blob \
-  $DB_NAME > $BACKUP_DIR/${DB_NAME}_full_$DATE.sql
-
-# Compress backup
-gzip $BACKUP_DIR/${DB_NAME}_full_$DATE.sql
-
-# Remove old backups
-find $BACKUP_DIR -name "*.sql.gz" -mtime +$RETENTION_DAYS -delete
-
-# Log backup completion
-echo "$(date): Backup completed for $DB_NAME" >> /var/log/mysql-backup.log
+# Apply to RDS instance:
+AWS Console → RDS → Databases → Modify → DB Parameter Group
 ```
 
-#### Point-in-Time Recovery Setup
+### Step 11: Database Migration from EC2 to RDS
 
-```sql
--- Enable binary logging for point-in-time recovery
-SET GLOBAL binlog_format = 'ROW';
-SET GLOBAL expire_logs_days = 7;
+#### Export Data from EC2 MySQL
 
--- Show binary logs
-SHOW BINARY LOGS;
+```bash
+# Connect to EC2 instance with MySQL
+ssh -i your-key.pem ec2-user@ec2-mysql-ip
 
--- Show master status
-SHOW MASTER STATUS;
+# Create database dump
+mysqldump -u root -p --single-transaction --routines --triggers company_db > company_db_export.sql
 
--- Create recovery point
-FLUSH LOGS;
+# Compress the dump
+gzip company_db_export.sql
+
+# Transfer to local machine
+scp -i your-key.pem ec2-user@ec2-mysql-ip:~/company_db_export.sql.gz .
 ```
 
-### Step 9: Monitoring and Alerting
+#### Import Data to RDS
 
-#### Performance Monitoring Queries
+```bash
+# Decompress the dump
+gunzip company_db_export.sql.gz
 
-```sql
--- Monitor active connections
-SELECT 
-    USER,
-    HOST,
-    DB,
-    COMMAND,
-    TIME,
-    STATE,
-    INFO
-FROM INFORMATION_SCHEMA.PROCESSLIST
-WHERE COMMAND != 'Sleep'
-ORDER BY TIME DESC;
+# Import to RDS
+mysql -h your-rds-endpoint -u admin -p ecommerce_db < company_db_export.sql
 
--- Monitor table locks
-SELECT 
-    r.trx_id waiting_trx_id,
-    r.trx_mysql_thread_id waiting_thread,
-    r.trx_query waiting_query,
-    b.trx_id blocking_trx_id,
-    b.trx_mysql_thread_id blocking_thread,
-    b.trx_query blocking_query
-FROM information_schema.innodb_lock_waits w
-INNER JOIN information_schema.innodb_trx b ON b.trx_id = w.blocking_trx_id
-INNER JOIN information_schema.innodb_trx r ON r.trx_id = w.requesting_trx_id;
-
--- Monitor database size growth
-SELECT 
-    table_schema,
-    ROUND(SUM(data_length + index_length) / 1024 / 1024, 1) AS 'DB Size in MB'
-FROM information_schema.tables
-GROUP BY table_schema;
+# Verify import
+mysql -h your-rds-endpoint -u admin -p -e "USE ecommerce_db; SHOW TABLES; SELECT COUNT(*) FROM employees;"
 ```
 
-## 🎯 Production Scenarios
+#### AWS Database Migration Service (DMS)
 
-### Scenario 1: High-Traffic Order Processing
+```bash
+# For large databases, use AWS DMS
+AWS Console → Database Migration Service
 
-```sql
--- Optimized order creation for high traffic
-DELIMITER //
-CREATE PROCEDURE ProcessOrder(
-    IN p_customer_id INT,
-    IN p_product_id INT,
-    IN p_quantity INT,
-    OUT p_order_id INT,
-    OUT p_status VARCHAR(50)
-)
-BEGIN
-    DECLARE v_price DECIMAL(10,2);
-    DECLARE v_stock INT;
-    DECLARE v_total DECIMAL(10,2);
-    
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        ROLLBACK;
-        SET p_status = 'ERROR';
-    END;
-    
-    START TRANSACTION;
-    
-    -- Check product availability
-    SELECT price, stock_quantity INTO v_price, v_stock
-    FROM products 
-    WHERE product_id = p_product_id AND is_active = TRUE
-    FOR UPDATE;
-    
-    IF v_stock >= p_quantity THEN
-        SET v_total = v_price * p_quantity;
-        
-        -- Create order
-        INSERT INTO orders (customer_id, total_amount, status)
-        VALUES (p_customer_id, v_total, 'processing');
-        
-        SET p_order_id = LAST_INSERT_ID();
-        
-        -- Add order item
-        INSERT INTO order_items (order_id, product_id, quantity, unit_price, total_price)
-        VALUES (p_order_id, p_product_id, p_quantity, v_price, v_total);
-        
-        -- Update stock
-        UPDATE products 
-        SET stock_quantity = stock_quantity - p_quantity
-        WHERE product_id = p_product_id;
-        
-        COMMIT;
-        SET p_status = 'SUCCESS';
-    ELSE
-        ROLLBACK;
-        SET p_status = 'INSUFFICIENT_STOCK';
-    END IF;
-END //
-DELIMITER ;
-
--- Test the procedure
-CALL ProcessOrder(1, 1, 2, @order_id, @status);
-SELECT @order_id, @status;
+# Create replication instance
+# Create source endpoint (EC2 MySQL)
+# Create target endpoint (RDS MySQL)
+# Create migration task
+# Monitor migration progress
 ```
 
-### Scenario 2: Customer Analytics Dashboard
+### Step 12: Cost Optimization
+
+#### RDS Cost Optimization Strategies
+
+```bash
+# Reserved Instances
+- 1-year or 3-year commitments
+- Up to 60% cost savings
+- All Upfront, Partial Upfront, or No Upfront
+
+# Right-sizing
+- Monitor CPU and memory utilization
+- Scale down during low usage periods
+- Use CloudWatch metrics for decisions
+
+# Storage Optimization
+- Use gp3 instead of gp2 for better price/performance
+- Enable storage autoscaling
+- Delete unnecessary snapshots
+
+# Backup Optimization
+- Optimize backup retention period
+- Use lifecycle policies for snapshots
+- Cross-region backup only when necessary
+```
+
+#### Cost Monitoring
+
+```bash
+# AWS Cost Explorer
+AWS Console → Cost Management → Cost Explorer
+
+# Filter by:
+- Service: Amazon RDS
+- Usage Type: Database instances, storage, I/O
+- Time period: Monthly, daily
+
+# Set up billing alerts
+AWS Console → Billing → Billing Preferences → Receive Billing Alerts
+```
+
+## 🎯 RDS vs EC2 Database Comparison
+
+### When to Use RDS
+✅ **Managed service preferred**  
+✅ **Automatic backups and patching**  
+✅ **Multi-AZ high availability**  
+✅ **Read replicas for scaling**  
+✅ **Built-in monitoring**  
+✅ **Less operational overhead**  
+
+### When to Use EC2 Database
+✅ **Full control over database**  
+✅ **Custom database configurations**  
+✅ **Specific OS requirements**  
+✅ **Cost optimization (for experts)**  
+✅ **Custom backup strategies**  
+✅ **Legacy application requirements**  
+
+### Migration Scenarios
 
 ```sql
--- Customer segmentation analysis
-SELECT 
-    CASE 
-        WHEN total_spent >= 1000 THEN 'Premium'
-        WHEN total_spent >= 500 THEN 'Gold'
-        WHEN total_spent >= 100 THEN 'Silver'
-        ELSE 'Bronze'
-    END as customer_segment,
-    COUNT(*) as customer_count,
-    AVG(total_spent) as avg_spent,
-    AVG(order_count) as avg_orders
-FROM (
-    SELECT 
-        c.customer_id,
-        COALESCE(SUM(o.total_amount), 0) as total_spent,
-        COUNT(o.order_id) as order_count
-    FROM customers c
-    LEFT JOIN orders o ON c.customer_id = o.customer_id
-    GROUP BY c.customer_id
-) customer_stats
-GROUP BY customer_segment
-ORDER BY avg_spent DESC;
+-- Scenario 1: E-commerce Platform
+-- Requirements: High availability, read scaling, automated backups
+-- Solution: RDS with Multi-AZ + Read Replicas
+
+-- Scenario 2: Analytics Workload
+-- Requirements: Custom configurations, specific performance tuning
+-- Solution: EC2 with optimized MySQL configuration
+
+-- Scenario 3: Development Environment
+-- Requirements: Cost-effective, easy setup
+-- Solution: RDS Free Tier for development, EC2 for production
 ```
 
 ## 🏆 Lab Completion Checklist
 
-- [ ] Production MySQL environment configured
-- [ ] Advanced security measures implemented
-- [ ] Complex database schema created
-- [ ] Advanced CRUD operations performed
-- [ ] Transaction management tested
-- [ ] Performance optimization applied
-- [ ] SSL/TLS encryption configured
-- [ ] Automated backup system implemented
-- [ ] Monitoring queries executed
-- [ ] Production scenarios tested
+- [ ] RDS subnet group created
+- [ ] RDS security group configured
+- [ ] RDS MySQL instance launched
+- [ ] Database connection established
+- [ ] Database schema created on RDS
+- [ ] CRUD operations performed successfully
+- [ ] Multi-AZ deployment configured
+- [ ] Read replica created and tested
+- [ ] Performance Insights enabled
+- [ ] CloudWatch monitoring configured
+- [ ] Database users and security implemented
+- [ ] Cost optimization strategies applied
+- [ ] Migration from EC2 to RDS completed
 
 ## 📚 Key Takeaways
 
-1. **Production Configuration**: Proper MySQL tuning for performance
-2. **Security Hardening**: SSL, user management, and access control
-3. **Transaction Management**: ACID compliance for data integrity
-4. **Performance Optimization**: Indexing and query optimization
-5. **Backup Strategies**: Automated backups and point-in-time recovery
-6. **Monitoring**: Proactive database health monitoring
+1. **Managed Service Benefits**: RDS reduces operational overhead significantly
+2. **High Availability**: Multi-AZ provides automatic failover capabilities
+3. **Scalability**: Read replicas enable horizontal read scaling
+4. **Security**: Built-in encryption, VPC isolation, and IAM integration
+5. **Monitoring**: Performance Insights and CloudWatch provide comprehensive monitoring
+6. **Cost Optimization**: Reserved instances and right-sizing reduce costs
+7. **Migration**: Smooth transition from EC2 to managed RDS service
+
+## 📊 RDS Benefits Summary
+
+| Benefit | Description | Impact |
+|---------|-------------|--------|
+| **Automated Backups** | Point-in-time recovery up to 35 days | Zero data loss |
+| **Multi-AZ** | Automatic failover to standby | 99.95% availability |
+| **Read Replicas** | Scale read operations | Handle 10x more reads |
+| **Performance Insights** | Database performance monitoring | Identify bottlenecks |
+| **Managed Patching** | Automatic security updates | Reduced security risks |
 
 ---
 
-**Next Day Preview**: Day 13 will cover AWS RDS (Relational Database Service) - Managed database services and migration from EC2 MySQL.
+**Next Day Preview**: Day 13 will cover AWS S3 (Simple Storage Service) - Object storage, static website hosting, and lifecycle policies.
 
 **Instructor**: Neeraj Kumar  
 **Date**: Day 12 - AWS DevOps Batch 4  
-**Duration**: 4 hours (Theory: 1 hour, Practical: 3 hours)
+**Duration**: 3 hours (Theory: 1 hour, Practical: 2 hours)
 
 ## 🎉 Congratulations!
 
-You've successfully implemented a production-grade MySQL environment on AWS EC2 with advanced features, security, and performance optimization!
+You've successfully mastered AWS RDS and understand the benefits of managed database services over self-managed databases on EC2!
