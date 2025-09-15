@@ -681,6 +681,102 @@ AWS Console → Billing → Billing Preferences → Receive Billing Alerts
 - [ ] Cost optimization strategies applied
 - [ ] Migration from EC2 to RDS completed
 
+## 🎤 Interview Questions & Answers
+
+### Fresher Level Questions
+
+**Q1: What is AWS RDS?**
+**A:** Amazon Relational Database Service (RDS) is a managed database service that makes it easy to set up, operate, and scale relational databases in the cloud. It handles routine tasks like provisioning, patching, backup, and recovery.
+
+**Q2: What database engines does RDS support?**
+**A:** RDS supports MySQL, PostgreSQL, MariaDB, Oracle, SQL Server, and Amazon Aurora.
+
+**Q3: What is the difference between RDS and running a database on EC2?**
+**A:** 
+- **RDS**: Managed service, automated backups, patching, scaling, less control
+- **EC2**: Self-managed, full control, manual maintenance, more operational overhead
+
+**Q4: What is Multi-AZ deployment in RDS?**
+**A:** Multi-AZ provides high availability by automatically replicating data to a standby instance in a different Availability Zone. Automatic failover occurs during planned maintenance or unplanned outages.
+
+**Q5: What are RDS Read Replicas?**
+**A:** Read replicas are read-only copies of your database that can be created in the same region or cross-region. They help scale read operations and reduce load on the primary database.
+
+### Intermediate Level Questions
+
+**Q6: Explain the difference between Multi-AZ and Read Replicas.**
+**A:** 
+- **Multi-AZ**: High availability, synchronous replication, automatic failover, same region
+- **Read Replicas**: Read scaling, asynchronous replication, manual promotion, can be cross-region
+
+**Q7: How does RDS backup work?**
+**A:** RDS provides:
+- **Automated Backups**: Daily snapshots with transaction logs, 1-35 days retention
+- **Manual Snapshots**: User-initiated, retained until manually deleted
+- **Point-in-time Recovery**: Restore to any second within retention period
+
+**Q8: What is Amazon Aurora and how is it different from RDS?**
+**A:** Aurora is AWS's cloud-native database engine, compatible with MySQL and PostgreSQL. Differences:
+- Up to 5x faster than MySQL, 3x faster than PostgreSQL
+- Storage auto-scales up to 128TB
+- Up to 15 read replicas
+- Continuous backup to S3
+
+**Q9: How do you secure an RDS instance?**
+**A:** 
+- Use VPC for network isolation
+- Configure security groups properly
+- Enable encryption at rest and in transit
+- Use IAM database authentication
+- Regular security patches (automated)
+- Monitor with CloudTrail
+
+**Q10: What is RDS Performance Insights?**
+**A:** A database performance tuning and monitoring feature that provides:
+- Database load visualization
+- Top SQL statements identification
+- Wait event analysis
+- Performance bottleneck detection
+
+### Advanced Level Questions
+
+**Q11: How would you migrate a large database from EC2 to RDS with minimal downtime?**
+**A:** 
+1. Use AWS Database Migration Service (DMS)
+2. Set up replication instance
+3. Create source and target endpoints
+4. Start full load and ongoing replication
+5. Monitor lag and switch over during maintenance window
+6. Update application connection strings
+
+**Q12: Explain RDS parameter groups and their use cases.**
+**A:** Parameter groups control database engine configuration:
+- **Default**: AWS-managed, cannot be modified
+- **Custom**: User-created, allows parameter modifications
+- Use cases: Performance tuning, security settings, feature enablement
+
+**Q13: How do you handle RDS storage scaling?**
+**A:** 
+- **Storage Autoscaling**: Automatically increases storage when threshold reached
+- **Manual Scaling**: Modify instance to increase storage
+- **Considerations**: Downtime for some engines, cost implications
+
+**Q14: What are the RDS maintenance windows and how do you manage them?**
+**A:** 
+- **System Maintenance**: OS and database engine patches
+- **User-defined Window**: Specify preferred maintenance time
+- **Immediate**: Apply changes immediately (may cause downtime)
+- **Next Window**: Apply during next maintenance window
+
+**Q15: How do you optimize RDS costs?**
+**A:** 
+- Use Reserved Instances for predictable workloads
+- Right-size instances based on utilization
+- Use appropriate storage types (gp3 vs gp2)
+- Delete unnecessary snapshots
+- Use Aurora Serverless for variable workloads
+- Monitor with Cost Explorer
+
 ## 📚 Key Takeaways
 
 1. **Managed Service Benefits**: RDS reduces operational overhead significantly
@@ -690,6 +786,9 @@ AWS Console → Billing → Billing Preferences → Receive Billing Alerts
 5. **Monitoring**: Performance Insights and CloudWatch provide comprehensive monitoring
 6. **Cost Optimization**: Reserved instances and right-sizing reduce costs
 7. **Migration**: Smooth transition from EC2 to managed RDS service
+8. **Backup Strategy**: Automated backups with point-in-time recovery
+9. **Parameter Groups**: Enable database engine customization
+10. **Aurora Advantage**: Cloud-native performance and scalability
 
 ## 📊 RDS Benefits Summary
 
@@ -711,4 +810,4 @@ AWS Console → Billing → Billing Preferences → Receive Billing Alerts
 
 ## 🎉 Congratulations!
 
-You've successfully mastered AWS RDS and understand the benefits of managed database services over self-managed databases on EC2!
+You've successfully mastered AWS RDS and understand the benefits of managed database services over self-managed databases on EC2! You're now prepared for RDS-related interview questions and can make informed decisions about database architecture in the cloud.

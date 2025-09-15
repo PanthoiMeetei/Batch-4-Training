@@ -1,5 +1,5 @@
-# Ignore LinkedIn posts
-*/linkedin-post.md
+# Ignore LinkedIn posts from all directories
+**/linkedin-post.md
 linkedin-post.md
 
 # Other common ignores

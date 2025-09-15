@@ -532,6 +532,104 @@ FLUSH PRIVILEGES;
 - [ ] Backup and restore tested
 - [ ] Performance monitoring queries executed
 
+## 🎤 Interview Questions & Answers
+
+### Fresher Level Questions
+
+**Q1: What is a Database?**
+**A:** A database is an organized collection of structured information stored electronically in a computer system, managed by a Database Management System (DBMS).
+
+**Q2: What is the difference between SQL and NoSQL databases?**
+**A:** 
+- **SQL**: Structured, fixed schema, ACID compliant, complex queries (MySQL, PostgreSQL)
+- **NoSQL**: Flexible schema, horizontally scalable, eventually consistent (MongoDB, DynamoDB)
+
+**Q3: What are CRUD operations?**
+**A:** 
+- **Create**: INSERT - Add new data
+- **Read**: SELECT - Retrieve data
+- **Update**: UPDATE - Modify existing data
+- **Delete**: DELETE - Remove data
+
+**Q4: What is a Primary Key?**
+**A:** A primary key is a unique identifier for each record in a table. It cannot be NULL and must be unique across all rows.
+
+**Q5: What is a Foreign Key?**
+**A:** A foreign key is a field that links two tables together. It refers to the primary key of another table, establishing relationships between tables.
+
+### Intermediate Level Questions
+
+**Q6: Explain ACID properties in databases.**
+**A:** 
+- **Atomicity**: All operations in a transaction succeed or fail together
+- **Consistency**: Database remains in valid state after transactions
+- **Isolation**: Concurrent transactions don't interfere with each other
+- **Durability**: Committed transactions persist even after system failure
+
+**Q7: What are different types of JOINs in SQL?**
+**A:** 
+- **INNER JOIN**: Returns matching records from both tables
+- **LEFT JOIN**: Returns all records from left table, matching from right
+- **RIGHT JOIN**: Returns all records from right table, matching from left
+- **FULL OUTER JOIN**: Returns all records when there's a match in either table
+
+**Q8: What is database normalization?**
+**A:** Process of organizing data to reduce redundancy and improve data integrity. Common forms:
+- **1NF**: Eliminate duplicate columns
+- **2NF**: Remove partial dependencies
+- **3NF**: Remove transitive dependencies
+
+**Q9: What are database indexes and why are they important?**
+**A:** Indexes are data structures that improve query performance by creating shortcuts to data. They speed up SELECT operations but can slow down INSERT/UPDATE/DELETE operations.
+
+**Q10: How do you optimize database performance?**
+**A:** 
+- Create appropriate indexes
+- Optimize queries (avoid SELECT *)
+- Use proper data types
+- Normalize database design
+- Regular maintenance (ANALYZE, OPTIMIZE)
+- Monitor slow queries
+
+### Advanced Level Questions
+
+**Q11: Explain database transactions and isolation levels.**
+**A:** Transactions ensure data integrity. Isolation levels:
+- **READ UNCOMMITTED**: Lowest isolation, dirty reads possible
+- **READ COMMITTED**: Prevents dirty reads
+- **REPEATABLE READ**: Prevents dirty and non-repeatable reads
+- **SERIALIZABLE**: Highest isolation, prevents all phenomena
+
+**Q12: What is the difference between clustered and non-clustered indexes?**
+**A:** 
+- **Clustered**: Physical order of data matches index order, one per table
+- **Non-clustered**: Separate structure pointing to data rows, multiple allowed
+
+**Q13: How would you handle database backup and recovery?**
+**A:** 
+- **Full Backup**: Complete database backup
+- **Incremental Backup**: Only changed data since last backup
+- **Point-in-time Recovery**: Restore to specific timestamp
+- **Test Recovery**: Regular testing of backup restoration
+
+**Q14: What are stored procedures and their advantages?**
+**A:** Pre-compiled SQL code stored in database. Advantages:
+- Better performance (pre-compiled)
+- Code reusability
+- Enhanced security
+- Centralized business logic
+- Reduced network traffic
+
+**Q15: How do you secure a MySQL database?**
+**A:** 
+- Use strong passwords
+- Create specific user accounts (avoid root)
+- Grant minimum required privileges
+- Enable SSL/TLS encryption
+- Regular security updates
+- Monitor access logs
+- Use firewalls and security groups
+
 ## 📚 Additional Resources
 
 - [MySQL Documentation](https://dev.mysql.com/doc/)
@@ -543,11 +641,14 @@ FLUSH PRIVILEGES;
 
 1. **Database Types**: SQL for structured data, NoSQL for flexibility
 2. **CRUD Operations**: Foundation of all database interactions
-3. **Normalization**: Reduces redundancy and improves integrity
-4. **Indexes**: Critical for query performance
-5. **Security**: User management and access control essential
-6. **Backup**: Regular backups prevent data loss
-7. **Monitoring**: Performance tracking for optimization
+3. **ACID Properties**: Ensure data integrity and consistency
+4. **Normalization**: Reduces redundancy and improves integrity
+5. **Indexes**: Critical for query performance optimization
+6. **JOINs**: Enable data retrieval from multiple related tables
+7. **Security**: User management and access control essential
+8. **Backup**: Regular backups prevent data loss
+9. **Monitoring**: Performance tracking for optimization
+10. **Transactions**: Ensure data consistency in multi-step operations
 
 ---
 

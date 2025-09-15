@@ -64,10 +64,85 @@ In this lab, you will:
 
 ---
 
+## 🎯 Key Takeaways
+
+1. **Cloud Computing** revolutionizes IT resource delivery
+2. **AWS Global Infrastructure** provides reliability and performance
+3. **Pay-as-you-go** pricing reduces upfront costs
+4. **Multiple pricing models** optimize costs for different use cases
+5. **Well-Architected Framework** guides best practices
+
 ## Conclusion and Q&A
 Today, we laid the foundation for the rest of the course. We explored the basics of cloud computing, delved into AWS's global infrastructure, and familiarized ourselves with the AWS Management Console and CLI. In our next session, we will dive deeper into AWS core services. Please ensure you complete the hands-on lab and come prepared with any questions.
 
 ---
+
+## 🎤 Interview Questions & Answers
+
+### Fresher Level Questions
+
+**Q1: What is Cloud Computing?**
+**A:** Cloud computing is the on-demand delivery of IT resources over the Internet with pay-as-you-go pricing. Instead of owning physical servers, you access computing power, storage, and databases from cloud providers like AWS.
+
+**Q2: What are the main benefits of Cloud Computing?**
+**A:** 
+- **Cost Savings**: Pay only for what you use
+- **Scalability**: Easily scale resources up or down
+- **Agility**: Quick access to new resources
+- **Global Reach**: Deploy worldwide with few clicks
+- **Reliability**: Built-in redundancy and backup
+
+**Q3: What is AWS?**
+**A:** Amazon Web Services (AWS) is a comprehensive cloud computing platform provided by Amazon. It offers over 200 services including computing power, storage, databases, networking, and more.
+
+**Q4: What are AWS Regions and Availability Zones?**
+**A:** 
+- **Regions**: Physical locations worldwide where AWS has data centers
+- **Availability Zones (AZs)**: Isolated data centers within a region with redundant power, networking, and connectivity
+
+**Q5: What are the different AWS pricing models?**
+**A:** 
+- **On-Demand**: Pay by hour/second with no commitments
+- **Reserved Instances**: 1-3 year commitments for up to 72% discount
+- **Spot Instances**: Bid for unused capacity, up to 90% discount
+
+### Intermediate Level Questions
+
+**Q6: Explain the difference between Region, Availability Zone, and Edge Location.**
+**A:** 
+- **Region**: Geographic area with multiple AZs (e.g., us-east-1)
+- **Availability Zone**: Isolated data center within a region (e.g., us-east-1a)
+- **Edge Location**: CDN endpoints for CloudFront, closer to users for low latency
+
+**Q7: What factors should you consider when choosing an AWS Region?**
+**A:** 
+- **Latency**: Proximity to end users
+- **Cost**: Pricing varies by region
+- **Compliance**: Data residency requirements
+- **Service Availability**: Not all services available in all regions
+
+**Q8: What is the AWS Free Tier and what are its limitations?**
+**A:** AWS Free Tier provides limited free usage of AWS services for 12 months. Includes:
+- 750 hours of EC2 t2.micro instances
+- 5GB of S3 storage
+- 750 hours of RDS
+Limitations: Usage limits, time restrictions, and specific instance types only.
+
+**Q9: How does AWS ensure high availability and fault tolerance?**
+**A:** 
+- Multiple Availability Zones per region
+- Data replication across AZs
+- Load balancing and auto-scaling
+- Backup and disaster recovery services
+- Global infrastructure with multiple regions
+
+**Q10: What is the AWS Well-Architected Framework?**
+**A:** A set of best practices and guidelines based on five pillars:
+- **Operational Excellence**: Running and monitoring systems
+- **Security**: Protecting information and systems
+- **Reliability**: Ensuring system recovery and availability
+- **Performance Efficiency**: Using resources efficiently
+- **Cost Optimization**: Avoiding unnecessary costs
 
 ## Additional Resources
 - [AWS Free Tier](https://aws.amazon.com/free/)
