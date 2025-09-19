@@ -329,7 +329,7 @@ A: VPC Endpoints provide private connectivity to AWS services without internet. 
 A: Use single NAT Gateway for multiple private subnets, consider NAT Instance for low traffic, use VPC Endpoints for AWS services.
 
 **Q15: Explain VPC Flow Logs and their use cases.**
-A: VPC Flow Logs capture IP traffic information for VPC, subnets, or network interfaces. Used for security analysis, troubleshooting, and compliance monitoring.
+A: VPC Flow Logs capture IP traffic information for VPC, subnets, or network interfaces. Used for security analysis, troubleshooting, and compliance monitoring
 
 ## 🔑 Key Takeaways
 
@@ -348,5 +348,5 @@ A: VPC Flow Logs capture IP traffic information for VPC, subnets, or network int
 ---
 
 **Hands-on Completed:** ✅ VPC Creation, Subnets, Gateways, EC2 Deployment, Connectivity Testing  
-**Duration:** 3-4 hours  
+**Duration:** 2 hours  
 **Difficulty:** Intermediate
