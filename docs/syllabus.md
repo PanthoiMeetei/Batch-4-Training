@@ -113,11 +113,12 @@ By the end of this course, students will be able to:
   - Read replicas and read scaling
   - RDS backup and recovery strategies
   - Practical of RDS creation using EC2
+  - Practical of MySQL database on EC2 and on local
 
 ### **Module 3: Networking & Security**
 
 #### Networking Fundamentals
-- **Day 12:** Amazon VPC & Networking
+- **Day 12:**Amazon VPC & Networking
   - VPC components and architecture (CIDR blocks, subnets)
   - Subnets (public, private, database) and route tables
   - Internet Gateway and NAT Gateway

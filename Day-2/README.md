@@ -36,11 +36,19 @@ AWS Organizations helps you centrally govern your environment as you grow and sc
 
 ### AWS Well-Architected Framework
 The Well-Architected Framework helps you understand the pros and cons of decisions you make while building systems on AWS. By using the Framework, you will learn architectural best practices for designing and operating reliable, secure, efficient, and cost-effective systems in the cloud. It is based on five pillars:
-- Operational Excellence
-- Security
-- Reliability
-- Performance Efficiency
-- Cost Optimization
+- **Operational Excellence**: Running and monitoring systems
+- **Security**: Protecting information and systems  
+- **Reliability**: Ensuring system recovery and availability
+- **Performance Efficiency**: Using resources efficiently
+- **Cost Optimization**: Avoiding unnecessary costs
+
+## 🎯 Key Takeaways
+
+1. **Root Account Security** is critical - enable MFA immediately
+2. **EC2 Instance Types** should match workload requirements
+3. **Security Groups** provide instance-level firewall protection
+4. **AMIs** enable consistent instance deployments
+5. **Billing Alerts** prevent unexpected charges
 
 ---
 
@@ -86,6 +94,60 @@ A placement group is a logical grouping of instances within a single Availabilit
 - [What is Amazon EC2?](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/concepts.html)
 - [Amazon EC2 Instance Types](https://aws.amazon.com/ec2/instance-types/)
 - [Amazon EC2 Security Groups for Linux Instances](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-security-groups.html)
+
+## 🎤 Interview Questions & Answers
+
+### Fresher Level Questions
+
+**Q1: What is AWS EC2?**
+**A:** Amazon Elastic Compute Cloud (EC2) is a web service that provides secure, resizable compute capacity in the cloud. It allows you to launch virtual servers (instances) with different configurations.
+
+**Q2: What is the difference between stopping and terminating an EC2 instance?**
+**A:** 
+- **Stop**: Instance is shut down but EBS volumes remain, can be restarted
+- **Terminate**: Instance is permanently deleted along with instance store volumes
+
+**Q3: What is an AMI?**
+**A:** Amazon Machine Image (AMI) is a pre-configured template containing the OS, application server, and applications needed to launch an EC2 instance.
+
+**Q4: What are Security Groups?**
+**A:** Security Groups act as virtual firewalls for EC2 instances, controlling inbound and outbound traffic. They are stateful - if you allow inbound traffic, outbound response is automatically allowed.
+
+**Q5: Why is MFA important for AWS accounts?**
+**A:** Multi-Factor Authentication adds an extra security layer requiring both password and authentication code from a device, significantly reducing the risk of unauthorized access.
+
+### Intermediate Level Questions
+
+**Q6: Explain different EC2 instance families and their use cases.**
+**A:** 
+- **General Purpose (T, M)**: Balanced compute, memory, networking - web servers, development
+- **Compute Optimized (C)**: High-performance processors - scientific computing, gaming
+- **Memory Optimized (R, X)**: Fast performance for memory-intensive workloads - databases, analytics
+- **Storage Optimized (I, D)**: High sequential read/write - distributed file systems
+- **Accelerated Computing (P, G)**: Hardware accelerators - machine learning, HPC
+
+**Q7: What is the difference between Security Groups and NACLs?**
+**A:** 
+- **Security Groups**: Instance-level, stateful, allow rules only, evaluate all rules
+- **NACLs**: Subnet-level, stateless, allow and deny rules, process rules in order
+
+**Q8: What are EC2 Placement Groups?**
+**A:** 
+- **Cluster**: Low-latency networking in single AZ
+- **Spread**: Instances on distinct hardware, max 7 per AZ
+- **Partition**: Instances in logical partitions, isolated from other partitions
+
+**Q9: What is Instance Metadata Service (IMDS)?**
+**A:** Service providing data about running instances accessible from within the instance. IMDSv2 is more secure, requiring session tokens for access.
+
+**Q10: How do you secure an AWS root account?**
+**A:** 
+- Enable MFA on root account
+- Create strong password
+- Don't use root for daily tasks
+- Create IAM users for regular operations
+- Enable CloudTrail for audit logging
+- Set up billing alerts
 
 ### Other Useful Sites
 - [AWS Ramp-Up Guide: Core Services](https://aws.amazon.com/training/ramp-up-guides/core-services/)

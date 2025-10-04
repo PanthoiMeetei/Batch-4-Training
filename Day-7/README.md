@@ -288,6 +288,58 @@ sudo chown ec2-user:ec2-user /data
 
 
 
+## 🎤 Interview Questions & Answers
+
+### Fresher Level Questions
+
+**Q1: What is Amazon EBS?**
+**A:** Amazon Elastic Block Store (EBS) provides persistent block storage volumes for EC2 instances. Data persists independently from the instance lifecycle.
+
+**Q2: What are the different EBS volume types?**
+**A:** 
+- **gp3/gp2**: General Purpose SSD for balanced price/performance
+- **io2/io1**: Provisioned IOPS SSD for high-performance workloads
+- **st1**: Throughput Optimized HDD for big data workloads
+- **sc1**: Cold HDD for infrequent access
+
+**Q3: Can you attach one EBS volume to multiple EC2 instances?**
+**A:** No, standard EBS volumes can only be attached to one EC2 instance at a time. However, EBS Multi-Attach (available for io1/io2) allows attachment to multiple instances.
+
+**Q4: What happens to EBS volumes when an EC2 instance is terminated?**
+**A:** Root EBS volumes are deleted by default, but additional EBS volumes persist unless specifically configured to delete on termination.
+
+**Q5: Do EBS volumes need to be in the same Availability Zone as EC2 instances?**
+**A:** Yes, EBS volumes can only be attached to EC2 instances in the same Availability Zone.
+
+### Intermediate Level Questions
+
+**Q6: Explain the difference between EBS and Instance Store.**
+**A:** 
+- **EBS**: Network-attached, persistent, can be detached/reattached, survives instance termination
+- **Instance Store**: Physically attached, temporary, high performance, data lost on stop/termination
+
+**Q7: How do you ensure data persistence across EC2 instance lifecycle?**
+**A:** 
+- Use EBS volumes for persistent storage
+- Properly unmount volumes before detaching
+- Create regular EBS snapshots for backup
+- Configure volumes to not delete on termination
+
+**Q8: What are EBS Snapshots and how do they work?**
+**A:** EBS Snapshots are point-in-time backups stored in S3. They are incremental - only changed blocks are saved after the first snapshot, reducing storage costs.
+
+**Q9: How do you migrate an EBS volume to a different Availability Zone?**
+**A:** 
+1. Create a snapshot of the EBS volume
+2. Create a new volume from the snapshot in the target AZ
+3. Attach the new volume to an instance in the target AZ
+
+**Q10: What is EBS encryption and when should you use it?**
+**A:** EBS encryption provides data-at-rest and data-in-transit encryption using AWS KMS keys. Use it for:
+- Sensitive data compliance requirements
+- Regulatory compliance (HIPAA, PCI DSS)
+- Enhanced security posture
+
 ## 📚 Additional Resources
 
 - [AWS EBS Documentation](https://docs.aws.amazon.com/ebs/)
@@ -299,6 +351,15 @@ sudo chown ec2-user:ec2-user /data
 **Lab Duration:** 60-80 minutes  
 **Difficulty:** Intermediate  
 **Cost:** ~$0.10 for 1 hour (10GB gp3 volume)
+
+## 🎯 Key Takeaways
+
+1. **EBS Volumes** provide persistent block storage for EC2
+2. **Data Persistence** survives instance termination
+3. **Volume Types** should match performance requirements
+4. **Same AZ Requirement** for volume-instance attachment
+5. **Proper Unmounting** prevents data corruption
+6. **Snapshots** enable backup and disaster recovery
 
 ## 🎉 Congratulations!
 
